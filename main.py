@@ -179,7 +179,8 @@ def start(message):
     # then send a short message with the ReplyKeyboardMarkup to set the reply keyboard for the chat
     # and delete that helper message so the user only sees the inline-menu message.
     try:
-        helper = bot.send_message(message.chat.id, "\u200b", reply_markup=main_menu())
+
+        helper = bot.send_message(message.chat.id, "تم اضافة ازرار الوصول للمحتوى بشكل اسرع", reply_markup=main_menu())
         try:
             bot.delete_message(message.chat.id, helper.message_id)
         except Exception:
