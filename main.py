@@ -1,10 +1,29 @@
 from flask import app
 import os
+import logging
+from logging.handlers import RotatingFileHandler
 from telebot import TeleBot
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InputFile, InlineKeyboardMarkup, InlineKeyboardButton
 
 app = app.Flask(__name__)
 
+# --- logging setup ---
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+log_dir = os.path.join(os.path.dirname(__file__), "logs")
+os.makedirs(log_dir, exist_ok=True)
+logger = logging.getLogger("telegram_bot")
+logger.setLevel(LOG_LEVEL)
+formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s", "%Y-%m-%d %H:%M:%S")
+
+stream_h = logging.StreamHandler()
+stream_h.setLevel(LOG_LEVEL)
+stream_h.setFormatter(formatter)
+logger.addHandler(stream_h)
+
+file_h = RotatingFileHandler(os.path.join(log_dir, "bot.log"), maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8")
+file_h.setLevel(LOG_LEVEL)
+file_h.setFormatter(formatter)
+logger.addHandler(file_h)
 
 TOKEN = os.getenv("API_TOKEN", "8458550485:AAE4D4EGbdg0dDVDWwPW8MpyuM4sKKsnIGI")
 
@@ -153,6 +172,7 @@ def submenu_inline(menu_key):
 @bot.message_handler(commands=["start"])
 def start(message):
     text = "👋 مرحباً بك!\nاختر من التصنيفات التالية:"
+    logger.info("/start from chat_id=%s user=%s", message.chat.id, getattr(message.from_user, 'id', None))
     # send the visible menu as an inline keyboard (so the message contains the buttons)
     bot.send_message(message.chat.id, text, reply_markup=main_menu_inline())
 
@@ -164,16 +184,18 @@ def start(message):
             bot.delete_message(message.chat.id, helper.message_id)
         except Exception:
             # ignore delete failures (bot might not have permission)
+            
             pass
-    except Exception:
+    except Exception as e:
         # if setting the reply keyboard fails, ignore — the inline menu still works
+        logger.exception("failed to set reply keyboard for chat_id=%s: %s", message.chat.id, e)
         pass
-
 
 # ===== التعامل مع الضغط على الأزرار =====
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
     text = message.text
+    logger.info("message from chat_id=%s: %s", message.chat.id, text)
 
     # map menu titles to keys
     title_to_key = {menu["title"]: key for key, menu in menus.items()}
@@ -188,11 +210,13 @@ def handle_message(message):
     # Back to main menu
     if text == "🔙 رجوع":
         bot.send_message(message.chat.id, "👋 مرحباً بك!\nاختر من التصنيفات التالية:", reply_markup=main_menu())
+        logger.info("sent main menu reply keyboard to chat_id=%s", message.chat.id)
         return
 
     # If pressed an item button, send folder content
     for key, menu in menus.items():
         if text in menu["items"]:
+            logger.info("selected item '%s' from menu '%s'", text, key)
             send_folder_content(message.chat.id, text)
             return
 
@@ -203,8 +227,10 @@ def handle_message(message):
 
 # ===== إرسال محتوى المجلد =====
 def send_folder_content(chat_id, item_name):
+    logger.info("send_folder_content: chat_id=%s item=%s", chat_id, item_name)
     folder_path = os.path.join(DATA_PATH, item_name)
     if not os.path.exists(folder_path):
+        logger.warning("folder not found: %s", folder_path)
         bot.send_message(chat_id, f"❌ لا يوجد محتوى في القسم {item_name}")
         return
 
@@ -218,15 +244,24 @@ def send_folder_content(chat_id, item_name):
 
         if file.endswith(".txt"):
             with open(path, "r", encoding="utf-8") as f:
-                bot.send_message(chat_id, f.read().strip())
+                try:
+                    bot.send_message(chat_id, f.read().strip())
+                except Exception as e:
+                    logger.exception("failed to send text file %s to chat_id=%s: %s", path, chat_id, e)
 
         elif file.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp")):
             with open(path, "rb") as img:
-                bot.send_photo(chat_id, img)
+                try:
+                    bot.send_photo(chat_id, img)
+                except Exception as e:
+                    logger.exception("failed to send image %s to chat_id=%s: %s", path, chat_id, e)
 
         else:
             with open(path, "rb") as doc:
-                bot.send_document(chat_id, InputFile(doc, file_name=file))
+                try:
+                    bot.send_document(chat_id, InputFile(doc, file_name=file))
+                except Exception as e:
+                    logger.exception("failed to send document %s to chat_id=%s: %s", path, chat_id, e)
 
 
 
