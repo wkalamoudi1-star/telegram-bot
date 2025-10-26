@@ -134,23 +134,14 @@ def main_menu_inline():
 
 # ===== إنشاء قائمة فرعية =====
 def submenu(menu_key):
-    # Helper to safely truncate strings so their UTF-8 encoding fits in max_bytes
-    def _truncate_utf8(s: str, max_bytes: int) -> str:
-        b = s.encode("utf-8")
-        if len(b) <= max_bytes:
-            return s
-        # cut bytes and ignore incomplete trailing multibyte sequences
-        return b[:max_bytes].decode("utf-8", "ignore")
-
+    """Create an inline submenu using stable short callback_data:
+    callback format: item|<menu_key>|<index>
+    This avoids long/truncated callback_data and keeps behavior consistent with submenu_inline.
+    """
     markup = InlineKeyboardMarkup()
-    prefix = "item|"
-    max_callback_bytes = 64
-    # compute how many bytes remain for the item part after the prefix
-    allowed_bytes = max_callback_bytes - len(prefix.encode("utf-8"))
-    for item in menus[menu_key]["items"]:
-        # truncate by bytes (not characters) to avoid BUTTON_DATA_INVALID
-        safe_data = _truncate_utf8(item, allowed_bytes)
-        markup.add(InlineKeyboardButton(item, callback_data=prefix + safe_data))
+    for idx, item in enumerate(menus[menu_key]["items"]):
+        cb = f"item|{menu_key}|{idx}"
+        markup.add(InlineKeyboardButton(item, callback_data=cb))
     markup.add(InlineKeyboardButton("🔙 رجوع", callback_data="back_main"))
     return markup
 
@@ -179,18 +170,17 @@ def start(message):
     # then send a short message with the ReplyKeyboardMarkup to set the reply keyboard for the chat
     # and delete that helper message so the user only sees the inline-menu message.
     try:
-
-        helper = bot.send_message(message.chat.id, "سوف تجد ازرار الوصول للمحتوى متاحه في القائمة الازرار للوصول بشكل اسرع.", reply_markup=main_menu())
-        # try:
-        #     # bot.delete_message(message.chat.id, helper.message_id)
-        # except Exception:
-        #     # ignore delete failures (bot might not have permission)
-            
-        #     pass
+        # send a helper message which sets the ReplyKeyboardMarkup for the chat.
+        # NOTE: do NOT delete this helper message — deleting it can remove the reply keyboard in some clients.
+        helper = bot.send_message(
+            message.chat.id,
+            "سوف تجد ازرار الوصول للمحتوى متاحه في القائمة اسفل الشاشة للوصول بشكل أسرع.",
+            reply_markup=main_menu(),
+        )
+        logger.info("sent helper message id=%s to set reply keyboard for chat_id=%s", getattr(helper, 'message_id', None), message.chat.id)
     except Exception as e:
         # if setting the reply keyboard fails, ignore — the inline menu still works
         logger.exception("failed to set reply keyboard for chat_id=%s: %s", message.chat.id, e)
-        pass
 
 # ===== التعامل مع الضغط على الأزرار =====
 @bot.message_handler(func=lambda message: True)
