@@ -115,7 +115,7 @@ menus = {
 # ===== إنشاء القائمة الرئيسية =====
 def main_menu():
     # Reply keyboard with one button per row (fixed buttons)
-    markup = ReplyKeyboardMarkup(resize_keyboard=True)
+    markup = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
     for key, menu in menus.items():
         markup.row(KeyboardButton(menu["title"]))
     return markup
