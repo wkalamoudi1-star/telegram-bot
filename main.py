@@ -1,11 +1,14 @@
-from config import API_TOKEN
-
+from flask import app
 import os
 from telebot import TeleBot
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InputFile, InlineKeyboardMarkup, InlineKeyboardButton
 
+app = app.Flask(__name__)
 
-bot = TeleBot(token=API_TOKEN)
+
+TOKEN = os.getenv("API_TOKEN", "8458550485:AAE4D4EGbdg0dDVDWwPW8MpyuM4sKKsnIGI")
+
+bot = TeleBot(token=TOKEN)
 DATA_PATH = "data"
 
 menus = {
@@ -287,8 +290,18 @@ def inline_callback(call):
         bot.answer_callback_query(call.id)
 
 
+# ===== تفعيل استضافة للبوت ليعمل طول الوقت =====
+@app.route("/" )
+def home():
+    return "Bot is running."
+
 # ===== تشغيل البوت =====
 if __name__ == "__main__":
-    # Running the bot only when executed as a script prevents side-effects during import
-    print("✅ البوت يعمل...")
-    bot.infinity_polling()
+    
+    import threading
+
+    def run_flask():
+        app.run(host="0.0.0.0", port=5000)
+
+    threading.Thread(target=run_flask).start()
+    bot.polling()

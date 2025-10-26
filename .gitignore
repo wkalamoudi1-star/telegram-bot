@@ -1,2 +1,84 @@
-/main copy.py
-/__pycache__
+# Byte-compiled / cache
+*.py[cod]
+*$py.class
+__pycache__/
+
+# Virtual environments
+.env
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Flask instance and local config
+instance/
+.flaskenv
+.flask*
+config.py
+config/*.py
+.envrc
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+instance/*.db
+
+# Telebot / bot runtime files (sessions, tokens, credentials)
+*.session
+*.session-journal
+*.token
+token.*
+bot_token*
+telegram_token*
+credentials.json
+secrets.*
+*.key
+*.pem
+*.crt
+
+# Logs, PIDs and sockets
+*.log
+logs/
+*.pid
+*.pid.lock
+*.sock
+
+# Testing, coverage and profiling
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+nosetests.xml
+.prof
+
+# Packaging / distribution
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+share/python-wheels/
+
+# C extensions and compiled artifacts
+*.so
+*.dylib
+*.dll
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Misc
+pip-log.txt
+pip-delete-this-directory.txt
+.env.*.local
+*.log.*
