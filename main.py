@@ -181,12 +181,12 @@ def start(message):
     try:
 
         helper = bot.send_message(message.chat.id, "سوف تجد ازرار الوصول للمحتوى متاحه في القائمة الازرار للوصول بشكل اسرع.", reply_markup=main_menu())
-        try:
-            bot.delete_message(message.chat.id, helper.message_id)
-        except Exception:
-            # ignore delete failures (bot might not have permission)
+        # try:
+        #     # bot.delete_message(message.chat.id, helper.message_id)
+        # except Exception:
+        #     # ignore delete failures (bot might not have permission)
             
-            pass
+        #     pass
     except Exception as e:
         # if setting the reply keyboard fails, ignore — the inline menu still works
         logger.exception("failed to set reply keyboard for chat_id=%s: %s", message.chat.id, e)
