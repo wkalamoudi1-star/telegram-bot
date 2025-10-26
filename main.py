@@ -180,7 +180,7 @@ def start(message):
     # and delete that helper message so the user only sees the inline-menu message.
     try:
 
-        helper = bot.send_message(message.chat.id, "تم اضافة ازرار الوصول للمحتوى بشكل اسرع", reply_markup=main_menu())
+        helper = bot.send_message(message.chat.id, "سوف تجد ازرار الوصول للمحتوى متاحه في القائمة الازرار للوصول بشكل اسرع.", reply_markup=main_menu())
         try:
             bot.delete_message(message.chat.id, helper.message_id)
         except Exception:
