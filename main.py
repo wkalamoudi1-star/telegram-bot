@@ -1,11 +1,11 @@
-from flask import app
+from flask import Flask, send_file, abort, render_template_string, request
 import os
 import logging
 from logging.handlers import RotatingFileHandler
 from telebot import TeleBot
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InputFile, InlineKeyboardMarkup, InlineKeyboardButton
 
-app = app.Flask(__name__)
+app = Flask(__name__)
 
 # --- logging setup ---
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -320,6 +320,31 @@ def inline_callback(call):
 @app.route("/" )
 def home():
     return "Bot is running."
+
+
+# ===== عرض ملفات السجل (logs) =====
+@app.route('/logs')
+def logs_index():
+    try:
+        files = sorted(os.listdir(log_dir))
+    except Exception:
+        files = []
+
+    links = '\n'.join(f'<li><a href="/logs/{fname}">{fname}</a></li>' for fname in files)
+    html = f"<h1>Logs</h1><p>Available log files:</p><ul>{links}</ul>"
+    return render_template_string(html)
+
+
+@app.route('/logs/<path:filename>')
+def serve_log(filename):
+    # basic safety: disallow path traversal
+    if filename != os.path.basename(filename):
+        abort(400)
+    path = os.path.join(log_dir, filename)
+    if not os.path.exists(path):
+        abort(404)
+    # stream the log file as plain text
+    return send_file(path, mimetype='text/plain')
 
 # ===== تشغيل البوت =====
 if __name__ == "__main__":
