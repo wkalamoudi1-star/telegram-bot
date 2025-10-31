@@ -161,10 +161,25 @@ def submenu_inline(menu_key):
 # ===== /start =====
 @bot.message_handler(commands=["start"])
 def start(message):
-    text = "👋 مرحباً بك!\nاختر من التصنيفات التالية:"
+    text = """
+مرحباً بك انا مساعدك التقني 🤖 .. 
+
+🌟 لمساعدة متدربي كليات الاتصالات 
+دبلوم و بكالوريوس  بنين ..
+
+🔻كل اللي عليك تضغط على الأزرار 
+الي حاب تعرف أجابته ..
+
+
+
+حساب (X) <a href='https://x.com/tcti_edu?s=21'>كلية الاتصالات  والمعلومات بجدة</a> 
+
+
+حساب (X) <a href='https://x.com/tvtcweb?s=11'>التدريب التقني</a>
+"""
     logger.info("/start from chat_id=%s user=%s", message.chat.id, getattr(message.from_user, 'id', None))
     # send the visible menu as an inline keyboard (so the message contains the buttons)
-    bot.send_message(message.chat.id, text, reply_markup=main_menu_inline())
+    bot.send_message(message.chat.id, text, reply_markup=main_menu_inline(), parse_mode="HTML")
 
     # then send a short message with the ReplyKeyboardMarkup to set the reply keyboard for the chat
     # and delete that helper message so the user only sees the inline-menu message.
