@@ -165,9 +165,7 @@ def submenu_inline(menu_key):
 
 
 # ===== /start =====
-@bot.message_handler(commands=["start"])
-def start(message):
-    text = """
+text = """
 مرحباً بك انا مساعدك التقني 🤖 .. 
 
 🌟 لمساعدة متدربي كليات الاتصالات 
@@ -183,6 +181,8 @@ def start(message):
 
 حساب (X) <a href='https://x.com/tvtcweb?s=11'>التدريب التقني</a>
 """
+@bot.message_handler(commands=["start"])
+def start(message): 
     logger.info("/start from chat_id=%s user=%s", message.chat.id, getattr(message.from_user, 'id', None))
     # send the visible menu as an inline keyboard (so the message contains the buttons)
     bot.send_message(message.chat.id, text, reply_markup=main_menu_inline(), parse_mode="HTML")
@@ -320,10 +320,12 @@ def inline_callback(call):
         bot.answer_callback_query(call.id)
     elif data == "back_main":
         bot.edit_message_text(
-            "👋 مرحباً بك!\nاختر من التصنيفات التالية:",
+            text,
             call.message.chat.id,
             call.message.message_id,
             reply_markup=main_menu_inline(),
+            parse_mode="HTML"
+            
         )
         bot.answer_callback_query(call.id)
     elif data.startswith("close|"):
