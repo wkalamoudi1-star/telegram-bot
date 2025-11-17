@@ -160,6 +160,13 @@ def inline_callback(call):
 # =========================
 # FLASK ROUTES
 # =========================
+@app.route('/logs')
+def logs_route():
+    log_file = os.path.join(log_dir, 'bot.log')
+    if not os.path.exists(log_file):
+        return Response('Log file not found', mimetype='text/plain')
+    with open(log_file, 'r', encoding='utf-8') as f:
+        return Response(f.read(), mimetype='text/plain')
 
 @app.route("/")
 def home():
