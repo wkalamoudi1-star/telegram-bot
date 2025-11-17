@@ -108,9 +108,7 @@ def send_folder_content(chat_id, item_name):
 # =========================
 
 @bot.message_handler(commands=["start"])
-def start():
-    # TODO: handler code goes here
-    pass
+def start(message):
     text = """
 مرحباً بك انا مساعدك التقني 🤖 ..
 
