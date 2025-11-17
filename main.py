@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, abort, render_template_string
+from flask import Flask, request, send_file, abort, render_template_string, Response
 import os
 import logging
 from logging.handlers import RotatingFileHandler
