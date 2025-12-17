@@ -29,7 +29,7 @@ file_h.setLevel(LOG_LEVEL)
 file_h.setFormatter(formatter)
 logger.addHandler(file_h)
 
-TOKEN = os.getenv("API_TOKEN", "8458550485:AAE4D4EGbdg0dDVDWwPW8MpyuM4sKKsnIGI")
+TOKEN = os.getenv("API_TOKEN", "8216898133:AAGDW6tJYLgKhJJ-huKuJIH-OSbrQuw8HTs")
 bot = telebot.TeleBot(TOKEN)
 DATA_PATH = "data"
 
