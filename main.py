@@ -125,6 +125,7 @@ def main_menu():
         markup.row(KeyboardButton(menu["title"]))
     return markup
 
+
 def main_menu_inline():
     """Inline keyboard for the main menu so it can be shown inside the same message.
     We also set a reply keyboard separately (sent then deleted) to keep the reply keys visible.
