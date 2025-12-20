@@ -2,7 +2,7 @@ services:
   - type: web
     name: static-web
     runtime: static
-    buildCommand: ""
+    buildCommand: "pip install -r requirements.txt"
     startCommand: "py main.py"
     staticPublishPath: ./build
     envVars:
