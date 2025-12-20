@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: static-web
+    runtime: static
+    buildCommand: ""
+    startCommand: "py main.py"
+    staticPublishPath: ./build
+    envVars:
+      - key: NODE_ENV
+        value: production
