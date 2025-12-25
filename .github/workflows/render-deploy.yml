@@ -1,0 +1,14 @@
+name: Render Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy
+        run: |
+          curl -X POST "https://api.render.com/deploy/srv-d53a7gm3jp1c738gporg?key=bbg5qwcMxtc"

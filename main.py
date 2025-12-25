@@ -9,6 +9,7 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 # Flask + Telegram Webhook Bot
 # =========================
 
+
 app = Flask(__name__)
 
 # --- logging setup ---
@@ -370,7 +371,7 @@ def telegram_webhook():
 if __name__ == "__main__":
     import requests
 
-    WEBHOOK_URL = "https://telegram-bot-2wbk.onrender.com/" + TOKEN
+    WEBHOOK_URL = "https://telegram-bot-1-gjjw.onrender.com/" + TOKEN
 
     try:
         requests.get(f"https://api.telegram.org/bot{TOKEN}/deleteWebhook")
