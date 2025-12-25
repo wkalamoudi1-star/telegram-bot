@@ -29,7 +29,10 @@ file_h.setLevel(LOG_LEVEL)
 file_h.setFormatter(formatter)
 logger.addHandler(file_h)
 
-TOKEN = os.getenv("API_TOKEN", "8216898133:AAGDW6tJYLgKhJJ-huKuJIH-OSbrQuw8HTs")
+TOKEN = os.getenv("API_TOKEN", "none")
+if (TOKEN == "none"):
+    logger.error("API_TOKEN environment variable not set. Exiting.")
+    exit(1)
 bot = telebot.TeleBot(TOKEN)
 DATA_PATH = "data"
 
