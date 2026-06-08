@@ -149,7 +149,7 @@ for _menu in menus.values():
             _seen.add(_it)
             items_list.append(_it)
 
-PER_ROW = 4
+PER_ROW = 3
 
 # =========================
 # KEYBOARD BUILDERS
